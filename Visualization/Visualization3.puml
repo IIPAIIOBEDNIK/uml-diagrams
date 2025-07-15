@@ -1,0 +1,56 @@
+@startuml
+actor Customer as U
+participant "Web UI" as UI
+participant "Order Controller" as OC
+participant "Payment Service" as PS
+database "База данных" as DB
+participant "Notification Service" as NS
+activate U
+'1. Оформление заказа
+group "1. Оформление заказа"
+    U -> UI : makingOrder
+    activate UI
+    UI -> OC : getOrderData
+    activate OC
+    OC -> DB : saveOrder
+    activate DB
+    DB -[#green]--> OC :orderSaved
+    deactivate DB
+    note right: Сохранен заказ в статусе "Ожидание оплаты
+end
+'2. Оплата заказа
+group "2. Оплата заказа"
+    OC -> PS : processPayment
+    activate PS
+    alt Успешная оплата
+        PS -[#green]--> OC : paymentResult
+        OC -[#green]--> NS : sendOrderNotification
+    else Ошибка оплаты
+        PS -[#red]--> OC : paymentError
+        deactivate PS
+        note left: Заказ сохраняется как предварительный
+    end    
+end
+'3. Подтверждение заказа
+group "3. Подтверждение заказа"
+OC --> UI : orderConfirmation
+deactivate OC
+UI --> U : informingUser
+deactivate UI
+end
+'4. Изменение корзины
+group "4. Изменение корзины"
+    U -> UI : modifyCart
+    note right: Действие может быть: добавление, удаление, изменение количества
+    UI -> OC : updateCart
+    OC -> DB : updateCartInDB
+    DB -[#green]--> OC : cartUpdateConfirmation
+    OC -> UI : notifyCartUpdate
+end
+'5. Уведомление менеджера
+group "5. Уведомление менеджера"
+    NS -> UI :
+    note left: Менеджер получает уведомление о новом заказе
+end
+deactivate U
+@enduml

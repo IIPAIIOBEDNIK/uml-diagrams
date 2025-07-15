@@ -1,0 +1,34 @@
+@startuml
+actor Customer as U
+participant "Web UI" as UI
+participant "Order Controller" as OC
+participant "Payment Service" as PS
+database "База данных" as DB
+activate U
+group "1. Оформление заказа"
+    U -> UI : makingOrder
+    activate UI
+    UI -> OC : getOrderData
+    activate OC
+    OC -> DB : saveOrder
+    activate DB
+    DB --> OC :orderSaved
+    deactivate DB
+end
+'2. Оплата заказа
+group "2. Оплата заказа"
+    OC -[#green]-> PS : makingPayment
+    activate PS
+    alt Успешная оплата
+        PS -[#green]--> OC : paymentResult
+    else Ошибка оплаты
+        PS -[#red]--> OC : paymentError
+        deactivate PS
+	end	
+end
+OC --> UI : orderConfirmation
+deactivate OC
+UI --> U : informingUser
+deactivate UI
+deactivate U
+@enduml

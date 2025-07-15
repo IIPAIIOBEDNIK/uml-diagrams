@@ -1,0 +1,15 @@
+@startuml
+actor Customer as U
+participant "Web UI" as UI
+participant "Order Controller" as OC
+participant "Payment Service" as PS
+database "База данных" as DB
+U -> UI : makingOrder
+UI -> OC : getOrderData
+OC -> DB : saveOrder
+DB --> OC :orderSaved
+OC -> PS : makingPayment
+PS --> OC : paymentResult
+OC --> UI : orderConfirmation
+UI --> U : informingUser
+@enduml
