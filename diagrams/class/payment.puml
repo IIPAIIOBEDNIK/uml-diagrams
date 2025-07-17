@@ -1,0 +1,39 @@
+@startuml
+abstract class Payment {
+    - private amount : double
+    - private paymentDate : DateTime
+    - private transactionId : int
+    + processPayment(amount: double, paymentDate: DateTime, transactionId: int)
+    + getAmount() : double
+    + setAmount(amount : double)
+    + getPaymentDate() : DateTime
+    + setPaymentDate(paymentDate : DateTime)
+    + getTransactionId() : Int
+    + setTransactionId(transactionId : int)
+}
+
+class CashPayment{
+    - cashProvided : double
+    + paymentCalculation()
+    + processPayment(amount: double, paymentDate: DateTime, transactionId: int)
+}
+
+class CardPayment{
+    - cardNumber : int
+    - ambosingName : Stringtring
+    - lifeSpan : DateTime
+    + cardValidation(cardNumber: int, ambosingName: String, lifeSpan: DateTime)
+    + processPayment(amount: double, paymentDate: DateTime, transactionId: int)
+    
+}
+
+class PaymentManager {
+    - List <Payment> payments
+    + processAllPayments(payment : Payment)
+    + registrationPayment(amount: double, paymentDate: DateTime, transactionId: int)
+}
+
+PaymentManager o-- Payment
+Payment <|-- CashPayment
+Payment <|-- CardPayment
+@enduml
