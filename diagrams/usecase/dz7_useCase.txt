@@ -1,0 +1,26 @@
+@startuml
+left to right direction
+actor "Клиент" as client
+actor "Кредитный менеджер" as manager
+actor "Служба безопасности" as sb
+actor "Бюро кредитных историй" as bki
+
+rectangle "Рассмотрение кредитной заявки" {
+(Подать заявку на кредит) as step1
+(Проверка заявки) as step2
+(Запросить информацию по клиенту) as step3
+(Проверка данных в БКИ) as step3_1
+(Проверка данных в СБ) as step3_2
+(Оформить страховку) as step4
+(Принятие решения по заявке) as step5
+}
+
+client --> step1
+step1 --> step2
+manager --> step2
+step2 --> step5
+step2 .> step3: include
+sb  <|-- step3
+bki <|-- step3
+step5 <.. step4: extends <<если требуется>>
+@enduml
