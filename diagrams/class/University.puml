@@ -1,0 +1,81 @@
+@startuml
+'Пользователь
+class User {
+- userId: int
+- name: String
+- email: String
+}
+
+'Студенты
+class Student {
+- studentId: int
+- account: List<Account>
+- profile: List<Profile>
+}
+
+
+class Account {
+- accountId: int
+- CreatedDate: Date
+}
+
+
+class Profile {
+- profileId: int
+- bio: String
+}
+
+'Преподаватель
+class Instructor {
+- instructorId: int
+- courseId: int
+- specialization: String
+}
+
+'Курс
+class Course {
+- courseId: int
+- category: String
+- hardLevel: String
+- descriptionText: string
+}
+
+'Зачисление
+class Enrollment {
+- enrollmentId: int
+- enrollmentDate: Date
+}
+
+class Module {
+- moduleId: int
+- title: string
+}
+
+class Section {
+- sectionId: int
+- title: string
+}
+
+'Материал
+class Material {
+- materialId: int
+- titleMaterial: String
+- descriptionMaterial: String
+}
+
+class PaymentProcessor {
+- processId: int
+- processPayment: boolean
+}
+
+User <|-- Student : Студент - подтип пользователя
+User <|-- Instructor : Инструктор - подтип пользователя
+Student "1" -- "0..*" Enrollment : ассоциативный класс (зачисление)
+Course "1" -- "0..*" Enrollment : ассоциативный класс (зачисление)
+Student --> Account : принадлежит аккаунту (ассоциация, 1)
+Instructor --> Profile : имеет профиль (ассоциация, 1)
+Course "1" *-- "*" Module : композиция (при удалении курса удаляются и модули)
+Module "1" *-- "*" Section : композиция (при удалении модуля удаляются и разделы)
+Section "*" --> "*" Material : содержит материалы (ассоциация, 0..*)
+Course ..> PaymentProcessor : зависимость (использует процессор для оплаты)
+@enduml
