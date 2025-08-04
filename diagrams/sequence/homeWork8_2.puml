@@ -1,0 +1,36 @@
+@startuml
+actor "Клиент" as client
+participant "Мобильное приложение" as mobileApp
+participant "Бэкенд" as back
+database "База данных" as db
+boundary "СМС-сервис" as sms
+
+activate client
+client -> mobileApp: Запрос перевода
+activate mobileApp
+mobileApp -> back: Запрос транзакции
+activate back
+back -> db: Проверка доступности средств
+activate db
+alt Средства есть
+    db --> back: Подтверждение
+    back --> mobileApp: Выполнение перевода
+    mobileApp --> client: Успех
+    opt Клиент подписан на СМС
+        activate sms
+        back -> sms: Отправка уведомления о переводе
+    end
+else Средств недостаточно
+    db --> back: Ошибка
+    deactivate db
+    back --> mobileApp: Транзакция отклонена
+    mobileApp --> client: Перевод отклонен
+    deactivate mobileApp
+    opt Клиент подписан на СМС
+        back -> sms: Уведомление о недостатке средств
+        deactivate back
+        deactivate sms
+    end
+end
+deactivate client
+@enduml
